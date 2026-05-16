@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🏥 Bingo Feria Hospital 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', sans-serif; background: #eef2f7; min-height: 100vh; padding: 16px 10px 50px; color: #1a1a2e; }
+.wrap { max-width: 680px; margin: 0 auto; }
+
+header { background: #0a3d6b; border-radius: 22px; padding: 26px 20px 22px; margin-bottom: 16px; text-align: center; position: relative; overflow: hidden; }
+header::before { content: ''; position: absolute; top: -40px; right: -30px; width: 160px; height: 160px; background: #1D9E75; opacity: 0.18; border-radius: 50%; }
+header::after { content: ''; position: absolute; bottom: -50px; left: -20px; width: 130px; height: 130px; background: #EF9F27; opacity: 0.15; border-radius: 50%; }
+.badge-year { display: inline-block; background: #EF9F27; color: white; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 4px 14px; border-radius: 20px; margin-bottom: 8px; }
+header h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(40px, 10vw, 64px); color: white; letter-spacing: 5px; line-height: 1; margin-bottom: 4px; }
+header .sub { color: rgba(255,255,255,0.72); font-size: 13px; margin-bottom: 16px; }
+.setup-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; position: relative; z-index: 1; }
+.setup-row input { background: rgba(255,255,255,0.14); border: 1.5px solid rgba(255,255,255,0.32); color: white; padding: 9px 14px; border-radius: 10px; font-size: 14px; font-family: 'Inter', sans-serif; width: 175px; outline: none; }
+.setup-row input::placeholder { color: rgba(255,255,255,0.5); }
+.setup-row input:focus { border-color: #EF9F27; }
+
+.btn { padding: 9px 18px; border-radius: 10px; border: none; cursor: pointer; font-size: 14px; font-weight: 700; font-family: 'Inter', sans-serif; transition: all 0.18s; white-space: nowrap; }
+.btn-amber { background: #EF9F27; color: white; }
+.btn-amber:hover { background: #BA7517; transform: translateY(-1px); }
+.btn-teal { background: #1D9E75; color: white; }
+.btn-teal:hover { background: #0F6E56; transform: translateY(-1px); }
+.btn-blue { background: #0a3d6b; color: white; }
+.btn-blue:hover { background: #185FA5; transform: translateY(-1px); }
+.btn-outline { background: white; color: #0a3d6b; border: 1.5px solid #b0c4de; }
+.btn-outline:hover { background: #E6F1FB; }
+
+.top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; flex-wrap: wrap; gap: 8px; }
+.player-label { font-weight: 800; font-size: 16px; color: #0a3d6b; }
+.pill { background: #E6F1FB; color: #185FA5; font-size: 12px; font-weight: 600; padding: 5px 12px; border-radius: 20px; }
+
+.alert-photo { background: #fff8e6; border: 1.5px solid #EF9F27; border-radius: 12px; padding: 11px 14px; font-size: 13px; color: #7a4f00; margin-bottom: 12px; display: flex; gap: 8px; align-items: flex-start; line-height: 1.5; }
+.alert-photo .ico { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+
+.bingo-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; margin-bottom: 14px; }
+.col-header { background: #0a3d6b; color: white; text-align: center; font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 2px; padding: 10px 2px; border-radius: 10px; }
+
+.cell { background: white; border: 2px solid transparent; border-radius: 10px; padding: 7px 5px; text-align: center; cursor: pointer; transition: all 0.2s ease; min-height: 88px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; position: relative; box-shadow: 0 2px 6px rgba(0,0,0,0.06); user-select: none; -webkit-tap-highlight-color: transparent; }
+.cell:hover:not(.free) { border-color: #1D9E75; transform: scale(1.03); box-shadow: 0 4px 14px rgba(29,158,117,0.22); }
+.cell .ico { font-size: 20px; line-height: 1; }
+.cell .txt { font-size: 9.5px; line-height: 1.3; color: #444; font-weight: 500; }
+.cell.free { background: #0a3d6b; cursor: default; border: none; }
+.cell.free .txt { color: white; font-weight: 800; font-size: 11px; }
+.cell.marked { background: #1D9E75; border-color: #0F6E56; box-shadow: 0 4px 14px rgba(29,158,117,0.3); }
+.cell.marked .txt { color: white; }
+.cell.proven { background: #0a3d6b; border-color: #185FA5; box-shadow: 0 4px 16px rgba(10,61,107,0.3); }
+.cell.proven .txt { color: white; }
+.cell.bingo-line { background: #EF9F27; border-color: #BA7517; animation: puls 0.5s ease; }
+.cell.bingo-line .txt { color: white; }
+@keyframes puls { 0%{transform:scale(1)} 50%{transform:scale(1.07)} 100%{transform:scale(1)} }
+
+.cbadge { position: absolute; top: 4px; right: 4px; font-size: 11px; background: rgba(255,255,255,0.85); border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+
+.status-bar { background: white; border-radius: 13px; padding: 13px 16px; text-align: center; margin-bottom: 12px; font-size: 14px; color: #888; box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: all 0.3s; line-height: 1.5; }
+.status-bar.win { background: #E1F5EE; color: #0F6E56; font-weight: 700; font-size: 17px; border: 2px solid #1D9E75; animation: cel 0.6s ease; }
+@keyframes cel { 0%{transform:scale(1)} 35%{transform:scale(1.04)} 65%{transform:scale(0.97)} 100%{transform:scale(1)} }
+
+.action-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 18px; }
+.action-row .btn { padding: 10px 18px; font-size: 13px; }
+
+.legend { background: white; border-radius: 13px; padding: 14px 16px; margin-bottom: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+.legend-title { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #0a3d6b; margin-bottom: 10px; }
+.legend-items { display: flex; gap: 10px; flex-wrap: wrap; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #555; }
+.ld { width: 20px; height: 20px; border-radius: 5px; flex-shrink: 0; }
+.ld-un { background: white; border: 2px solid #ddd; }
+.ld-mk { background: #1D9E75; }
+.ld-pv { background: #0a3d6b; }
+.ld-bi { background: #EF9F27; }
+
+.rules-box { background: white; border-radius: 13px; padding: 14px 16px; font-size: 13px; color: #888; line-height: 1.7; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+.rules-box h3 { font-size: 11px; font-weight: 700; color: #0a3d6b; margin-bottom: 8px; letter-spacing: 1.5px; text-transform: uppercase; }
+.rules-box ol { padding-left: 18px; }
+.rules-box li { margin-bottom: 4px; }
+
+/* MODAL */
+.modal-bg { position: fixed; inset: 0; background: rgba(10,61,107,0.82); display: none; align-items: center; justify-content: center; z-index: 800; padding: 20px; }
+.modal-bg.open { display: flex; }
+.modal { background: white; border-radius: 20px; padding: 28px 24px; max-width: 360px; width: 100%; text-align: center; animation: popIn 0.35s cubic-bezier(0.34,1.56,0.64,1); }
+@keyframes popIn { from{transform:scale(0.5);opacity:0} to{transform:scale(1);opacity:1} }
+.modal .m-ico { font-size: 44px; margin-bottom: 10px; }
+.modal h2 { font-size: 20px; font-weight: 800; color: #0a3d6b; margin-bottom: 6px; }
+.modal .m-desc { font-size: 13px; color: #777; line-height: 1.5; margin-bottom: 18px; }
+.modal .m-desc strong { color: #0a3d6b; }
+.photo-area { border: 2px dashed #ccc; border-radius: 14px; padding: 20px; margin-bottom: 16px; cursor: pointer; transition: all 0.2s; background: #f8f9fa; }
+.photo-area:hover { border-color: #1D9E75; background: #E1F5EE; }
+.photo-area input { display: none; }
+.photo-area .up-ico { font-size: 34px; margin-bottom: 6px; }
+.photo-area p { font-size: 13px; color: #888; }
+.photo-preview { width: 100%; max-height: 180px; object-fit: cover; border-radius: 10px; margin-bottom: 14px; display: none; }
+.modal-btns { display: flex; gap: 8px; }
+.modal-btns .btn { flex: 1; padding: 11px; font-size: 13px; }
+
+/* WIN */
+.win-overlay { position: fixed; inset: 0; background: rgba(10,61,107,0.88); display: none; align-items: center; justify-content: center; z-index: 999; padding: 20px; }
+.win-overlay.open { display: flex; }
+.win-card { background: white; border-radius: 24px; padding: 36px 28px; max-width: 340px; width: 100%; text-align: center; animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+.win-card .w-emo { font-size: 58px; margin-bottom: 10px; }
+.win-card h2 { font-family: 'Bebas Neue', sans-serif; font-size: 52px; color: #1D9E75; letter-spacing: 4px; margin-bottom: 6px; }
+.win-card .w-name { font-size: 22px; font-weight: 800; color: #0a3d6b; margin-bottom: 6px; }
+.win-card .w-sub { font-size: 13px; color: #888; margin-bottom: 8px; line-height: 1.5; }
+.proof-note { background: #fff8e6; border: 1.5px solid #EF9F27; border-radius: 10px; padding: 10px 14px; font-size: 12px; color: #7a4f00; margin-bottom: 18px; text-align: left; line-height: 1.5; }
+.win-card .btn { width: 100%; padding: 12px; font-size: 15px; }
+
+@media (max-width: 480px) {
+  .cell { min-height: 74px; }
+  .cell .ico { font-size: 17px; }
+  .cell .txt { font-size: 9px; }
+  .col-header { font-size: 18px; padding: 8px 2px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="badge-year">⚕ Edición 2026</div>
+  <h1>BINGO</h1>
+  <p class="sub">🏥 Feria Hospital 2026 &nbsp;·&nbsp; Situaciones reales del equipo</p>
+  <div class="setup-row">
+    <input type="text" id="playerInput" placeholder="Tu nombre..." maxlength="20" />
+    <button class="btn btn-amber" onclick="setPlayer()">🎲 Jugar</button>
+  </div>
+</header>
+
+<div class="top-bar">
+  <span class="player-label" id="playerDisplay">Jugador</span>
+  <div style="display:flex;gap:8px;">
+    <span class="pill" id="markedCount">0 marcados</span>
+    <span class="pill" id="provenCount" style="background:#E1F5EE;color:#0F6E56;">0 con foto 📸</span>
+  </div>
+</div>
+
+<div class="alert-photo">
+  <span class="ico">📸</span>
+  <div><strong>¡Foto obligatoria para ganar!</strong> Tocá una casilla para marcarla (verde). Tocala de nuevo para subir la foto como prueba (azul). Solo con fotos podés cantar BINGO válido.</div>
+</div>
+
+<div class="status-bar" id="statusBar">🎯 Tildá las situaciones que viviste hoy. ¡Completá una línea con fotos y gritá BINGO!</div>
+
+<div class="bingo-grid" id="bingoGrid"></div>
+
+<div class="action-row">
+  <button class="btn btn-teal" onclick="newCard()">🔀 Nueva Tarjeta</button>
+  <button class="btn btn-outline" onclick="resetMarks()">↺ Reiniciar</button>
+  <button class="btn btn-amber" onclick="shareGame()">📤 Compartir</button>
+</div>
+
+<div class="legend">
+  <div class="legend-title">Referencias</div>
+  <div class="legend-items">
+    <div class="legend-item"><div class="ld ld-un"></div> Sin marcar</div>
+    <div class="legend-item"><div class="ld ld-mk"></div> Marcado (falta foto)</div>
+    <div class="legend-item"><div class="ld ld-pv"></div> ✅ Con foto</div>
+    <div class="legend-item"><div class="ld ld-bi"></div> 🏆 Línea BINGO</div>
+  </div>
+</div>
+
+<div class="rules-box">
+  <h3>📋 Reglas del juego</h3>
+  <ol>
+    <li>Ingresá tu nombre y recibís tu tarjeta única.</li>
+    <li>1° toque → casilla marcada en verde (viviste esa situación).</li>
+    <li>2° toque → subís tu foto como prueba → casilla se pone azul.</li>
+    <li>Completá una línea completa con todas las casillas con foto.</li>
+    <li>¡Gritá BINGO y mostrá las fotos al grupo para validar! 🎉</li>
+  </ol>
+</div>
+
+</div>
+
+<!-- PHOTO MODAL -->
+<div class="modal-bg" id="photoModal">
+  <div class="modal">
+    <div class="m-ico">📸</div>
+    <h2>Subí tu prueba</h2>
+    <p class="m-desc" id="modalDesc">Necesitás una foto para validar esta casilla.</p>
+    <img class="photo-preview" id="photoPreview" src="" alt="preview" />
+    <div class="photo-area" onclick="document.getElementById('photoInput').click()">
+      <input type="file" id="photoInput" accept="image/*" capture="environment" onchange="handlePhoto(event)" />
+      <div class="up-ico">📷</div>
+      <p>Tocá para sacar foto o elegir de la galería</p>
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-outline" onclick="closePhotoModal()">Cancelar</button>
+      <button class="btn btn-blue" id="confirmBtn" onclick="confirmPhoto()" disabled>✅ Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<!-- WIN OVERLAY -->
+<div class="win-overlay" id="winOverlay" onclick="closeWin()">
+  <div class="win-card" onclick="event.stopPropagation()">
+    <div class="w-emo">🏆</div>
+    <div class="w-name" id="winnerName">Jugador</div>
+    <h2>¡BINGO!</h2>
+    <p class="w-sub">completó una línea en la<br><strong>Feria Hospital 2026</strong></p>
+    <div class="proof-note">📸 <strong>Mostrá tus fotos</strong> al grupo para validar la victoria. ¡Sin fotos no vale!</div>
+    <button class="btn btn-teal" onclick="closeWin()">🎊 ¡Seguir jugando!</button>
+  </div>
+</div>
+
+<script>
+const ITEMS = [
+  { ico: "🛵", txt: "El Chino entró al stand con su scooter" },
+  { ico: "🗣️", txt: "Luciano (Monumento) se quedó 2 horas hablando" },
+  { ico: "☕", txt: "La máquina de café se descompuso" },
+  { ico: "🥪", txt: "Luiz Zamboni almorzó parado en el depósito" },
+  { ico: "⏰", txt: "Paulo llegó a las 8h al stand" },
+  { ico: "📦", txt: "Alex sacó cinta adhesiva de su maleta" },
+  { ico: "🔩", txt: "Alex sacó un tornillo de su maleta" },
+  { ico: "💊", txt: "Alex sacó una pastilla calmante de su maleta" },
+  { ico: "🍫", txt: "El brownie tenía envase imposible de abrir" },
+  { ico: "🤧", txt: "Víctor repartió remedios para la gripe como Jesús los panes" },
+  { ico: "📊", txt: "Mariana preguntó 1000 veces cómo iban las ventas 🤪" }
+];
+
+let playerName = "Jugador";
+let currentCard = [];
+let marked = new Set();
+let proven = new Set();
+let hasWon = false;
+let pendingCell = -1;
+
+function shuffle(a) {
+  const b = [...a];
+  for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; }
+  return b;
+}
+
+function setPlayer() {
+  const v = document.getElementById("playerInput").value.trim();
+  if (v) { playerName = v; document.getElementById("playerDisplay").textContent = playerName; }
+  newCard();
+}
+
+function newCard() {
+  hasWon = false; marked = new Set(); proven = new Set();
+  let pool = [];
+  while (pool.length < 24) pool = [...pool, ...shuffle(ITEMS)];
+  pool = pool.slice(0, 24);
+  currentCard = [...pool.slice(0,12), { ico:"⭐", txt:"LIBRE", free:true }, ...pool.slice(12)];
+  proven.add(12);
+  render(); updateCounts(); updateStatus();
+}
+
+function render() {
+  const letters = ["B","I","N","G","O"];
+  let html = letters.map(l=>`<div class="col-header">${l}</div>`).join("");
+  const wc = getWinCells();
+  currentCard.forEach((item, i) => {
+    const free = item.free;
+    const mk = marked.has(i);
+    const pv = proven.has(i) && !free;
+    const bi = wc.has(i);
+    let cls = "cell";
+    if (free) cls += " free";
+    else if (bi) cls += " proven bingo-line";
+    else if (pv) cls += " proven";
+    else if (mk) cls += " marked";
+    let badge = "";
+    if (pv && !free) badge = `<div class="cbadge">✅</div>`;
+    else if (mk && !free) badge = `<div class="cbadge">📸</div>`;
+    html += `<div class="${cls}" onclick="${free?"":"tapCell("+i+")"}">
+      <div class="ico">${item.ico}</div>
+      <div class="txt">${item.txt}</div>
+      ${badge}
+    </div>`;
+  });
+  document.getElementById("bingoGrid").innerHTML = html;
+}
+
+function tapCell(i) {
+  if (proven.has(i)) { proven.delete(i); marked.delete(i); render(); updateCounts(); updateStatus(); return; }
+  if (marked.has(i)) { openPhotoModal(i); return; }
+  marked.add(i); render(); updateCounts(); updateStatus();
+}
+
+function openPhotoModal(i) {
+  pendingCell = i;
+  const item = currentCard[i];
+  document.getElementById("modalDesc").innerHTML = `Foto de prueba para:<br><strong>"${item.txt}"</strong>`;
+  document.getElementById("photoPreview").style.display = "none";
+  document.getElementById("photoPreview").src = "";
+  document.getElementById("confirmBtn").disabled = true;
+  document.getElementById("photoInput").value = "";
+  document.getElementById("photoModal").classList.add("open");
+}
+
+function handlePhoto(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const prev = document.getElementById("photoPreview");
+    prev.src = ev.target.result;
+    prev.style.display = "block";
+    document.getElementById("confirmBtn").disabled = false;
+  };
+  reader.readAsDataURL(file);
+}
+
+function confirmPhoto() {
+  if (pendingCell < 0) return;
+  proven.add(pendingCell); marked.add(pendingCell);
+  closePhotoModal(); render(); updateCounts(); checkWin(); updateStatus();
+}
+
+function closePhotoModal() { document.getElementById("photoModal").classList.remove("open"); pendingCell = -1; }
+
+function lines() {
+  const l = [];
+  for (let r=0;r<5;r++) l.push([r*5,r*5+1,r*5+2,r*5+3,r*5+4]);
+  for (let c=0;c<5;c++) l.push([c,c+5,c+10,c+15,c+20]);
+  l.push([0,6,12,18,24]); l.push([4,8,12,16,20]);
+  return l;
+}
+
+function pf(i) { return currentCard[i]?.free || proven.has(i); }
+
+function getWinCells() {
+  const s = new Set();
+  if (!hasWon) return s;
+  for (const ln of lines()) if (ln.every(pf)) ln.forEach(i=>s.add(i));
+  return s;
+}
+
+function checkWin() {
+  if (hasWon) return;
+  for (const ln of lines()) {
+    if (ln.every(pf)) { hasWon = true; showWin(); return; }
+  }
+}
+
+function updateCounts() {
+  const m = [...marked].filter(i=>!currentCard[i]?.free).length;
+  const p = [...proven].filter(i=>!currentCard[i]?.free).length;
+  document.getElementById("markedCount").textContent = `${m} marcados`;
+  document.getElementById("provenCount").textContent = `${p} con foto 📸`;
+}
+
+function updateStatus() {
+  if (hasWon) return;
+  const bar = document.getElementById("statusBar");
+  bar.className = "status-bar";
+  const m = [...marked].filter(i=>!currentCard[i]?.free).length;
+  const p = [...proven].filter(i=>!currentCard[i]?.free).length;
+  if (m===0) bar.textContent = "🎯 Tildá las situaciones que viviste hoy. ¡Completá una línea con fotos!";
+  else if (p===0) bar.textContent = `✅ ${m} marcada(s). Tocalas de nuevo para subir la foto 📸`;
+  else if (p<5) bar.textContent = `📸 ${p} foto(s) subida(s). ¡Seguí completando tu línea!`;
+  else bar.textContent = `🔥 ¡Vas muy bien! Revisá si ya tenés una línea completa con fotos...`;
+}
+
+function showWin() {
+  const bar = document.getElementById("statusBar");
+  bar.className = "status-bar win";
+  bar.textContent = `🏆 ¡BINGO, ${playerName}! ¡Mostrá tus fotos para validar!`;
+  document.getElementById("winnerName").textContent = playerName;
+  render();
+  document.getElementById("winOverlay").classList.add("open");
+}
+
+function closeWin() { document.getElementById("winOverlay").classList.remove("open"); }
+
+function resetMarks() {
+  marked = new Set(); proven = new Set(); proven.add(12);
+  hasWon = false; render(); updateCounts(); updateStatus();
+}
+
+function shareGame() {
+  const url = window.location.href;
+  const text = `🏥 ¡Bingo de la Feria Hospital 2026!\n😂 Situaciones reales de nuestro equipo\n📸 Necesitás fotos como prueba para ganar\n\n${playerName} ya está jugando 👇`;
+  if (navigator.share) {
+    navigator.share({ title:"🏥 Bingo Feria Hospital 2026", text, url }).catch(()=>fallback(url));
+  } else { fallback(url); }
+}
+
+function fallback(url) {
+  navigator.clipboard.writeText(url).then(() => {
+    const btns = document.querySelectorAll(".btn-amber");
+    btns.forEach(b => { if(b.textContent.includes("Compartir")||b.textContent.includes("copiado")) { const o=b.textContent; b.textContent="✅ ¡Link copiado!"; b.style.background="#1D9E75"; setTimeout(()=>{b.textContent=o;b.style.background="";},2500); }});
+  }).catch(()=>prompt("Copiá este link:", url));
+}
+
+newCard();
+</script>
+</body>
+</html>
